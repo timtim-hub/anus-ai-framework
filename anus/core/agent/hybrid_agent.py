@@ -43,6 +43,28 @@ class HybridAgent(ToolAgent):
             "executor": ToolAgent(name="executor", tools=tools),
             "critic": ToolAgent(name="critic", tools=tools)
         }
+
+    def add_specialized_agent(self, role: str, config: Dict[str, Any]) -> None:
+        """
+        Add a specialized agent to this hybrid agent.
+        
+        Args:
+            role: The role name for the specialized agent.
+            config: Configuration dictionary for the specialized agent.
+        """
+        # Extract necessary parameters for the ToolAgent
+        name = config.get("name", f"{role}-agent")
+        max_iterations = config.get("max_iterations", self.max_iterations)
+        tools = config.get("tools", None)
+        
+        # Create a new ToolAgent with the specified configuration
+        self.specialized_agents[role] = ToolAgent(
+            name=name, 
+            max_iterations=max_iterations, 
+            tools=tools
+        )
+        
+        logging.info(f"Added specialized agent with role '{role}' to HybridAgent '{self.name}'")
     
     def _assess_complexity(self, task: str) -> float:
         """
